@@ -5,7 +5,10 @@ import datetime
 import holidays
 from flask import Flask
 from flask import request
-def main(model, scaler, season_encoder, label_classes):
+import logging
+import warnings
+import sys
+def main(model, scaler, season_encoder, label_encoder):
     ny_tz = pytz.timezone('America/New_York')
     def get_season(month):
         if month in [12, 1, 2]:
@@ -45,8 +48,8 @@ def main(model, scaler, season_encoder, label_classes):
         features = np.hstack((zones.reshape(-1, 1), hour_sin.reshape(-1, 1), hour_cos.reshape(-1, 1), is_weekend.reshape(-1, 1), season_encoded.reshape(-1, 1), is_holiday.reshape(-1, 1)))
         features = scaler.transform(features)
         busyness = model.predict(features)
-        busyness = label_classes.inverse_transform(busyness)
-        return {'busyness': busyness}, 200
+        busyness = label_encoder.inverse_transform(busyness)
+        return {'busyness': busyness.tolist()}, 200
     
     @app.route('/api/predict_single_zone', methods=['POST'])
     def predict_single_zone():
@@ -60,6 +63,7 @@ def main(model, scaler, season_encoder, label_classes):
             zone_times = request.get_json()
             zone = zone_times['zoneId']
             times = zone_times['zonedDateTimeList']
+            times = [datetime.datetime.fromisoformat(time).astimezone(ny_tz) for time in times]
         except Exception as e:
             return {'error': str(e)}, 400
         
@@ -73,15 +77,24 @@ def main(model, scaler, season_encoder, label_classes):
         features = np.hstack((zones.reshape(-1, 1), hour_sin.reshape(-1, 1), hour_cos.reshape(-1, 1), is_weekend.reshape(-1, 1), season_encoded.reshape(-1, 1), is_holiday.reshape(-1, 1)))
         features = scaler.transform(features)
         busyness = model.predict(features)
-        busyness = label_classes.inverse_transform(busyness)
-        return {'busyness': busyness}, 200
+        busyness = label_encoder.inverse_transform(busyness)
+        return {'busyness': busyness.tolist()}, 200
     
     return app
 
+warnings.filterwarnings("ignore")
+logging.basicConfig(
+    level=logging.ERROR,
+    stream=sys.stdout,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger('werkzeug')
+logger.setLevel(logging.ERROR)
+model = joblib.load("busyness_model/xgb_busyness_model.pkl")
+label_encoder = joblib.load("busyness_model/label_encoder.pkl")
+season_encoder = joblib.load("busyness_model/season_encoder.pkl")
+scaler = joblib.load("busyness_model/scaler.pkl")
+app = main(model, scaler, season_encoder, label_encoder)
+
 if __name__ == "__main__":
-    model = joblib.load("xgb_busyness_model.pkl")
-    label_classes = np.load("label_classes.npy", allow_pickle=True)
-    season_encoder = joblib.load("season_encoder.pkl")
-    scaler = joblib.load("scaler.pkl")
-    app = main(model, scaler, season_encoder, label_classes)
     app.run(host='0.0.0.0', port=5000, debug=False)

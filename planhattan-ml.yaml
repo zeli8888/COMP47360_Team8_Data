@@ -1,0 +1,12 @@
+services:
+  planhattan-ml:
+    image: zeli8888/planhattan-ml:${version}
+    container_name: planhattan-ml
+    ports:
+      - 5000:5000
+    networks:
+      - planhattan-network
+
+networks:
+  planhattan-network:
+    driver: bridge
