@@ -2,6 +2,8 @@ services:
   planhattan-ml:
     image: zeli8888/planhattan-ml:${version}
     container_name: planhattan-ml
+    environment:
+      - GUNICORN_WORKERS=${GUNICORN_WORKERS:-3}
     ports:
       - 5000:5000
     networks:
