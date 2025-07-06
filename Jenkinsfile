@@ -9,14 +9,16 @@ pipeline{
 
     stage('Test'){
       steps{
-        sh 'docker build -t planhattan-ml-test -f TestDockerfile .'
-        def testExitCode = sh(
-            script: 'docker run --rm planhattan-ml-test',
-            returnStatus: true
-        )
-        
-        if (testExitCode != 0) {
-            error "test failed with exit code: ${testExitCode}"
+        script {
+            sh 'docker build -t planhattan-ml-test -f TestDockerfile .'
+            def testExitCode = sh(
+                script: 'docker run --rm planhattan-ml-test',
+                returnStatus: true
+            )
+            
+            if (testExitCode != 0) {
+                error "测试失败，退出码: ${testExitCode}"
+            }
         }
       }
     }
