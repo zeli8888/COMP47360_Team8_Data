@@ -1,0 +1,14 @@
+FROM python:3.12-slim
+
+WORKDIR /home/planhattan-ml-test
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install pytest
+
+COPY prediction_controller.py .
+COPY prediction_controller_test.py .
+COPY busyness_model/ busyness_model/
+
+CMD ["pytest", "prediction_controller_test.py", "-v"]

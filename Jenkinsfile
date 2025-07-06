@@ -9,8 +9,15 @@ pipeline{
 
     stage('Test'){
       steps{
-        sh 'python3 -m pip install -r requirements.txt'
-        sh 'pytest prediction_controller_test.py -v'
+        sh 'docker build -t planhattan-ml-test -f TestDockerfile .'
+        def testExitCode = sh(
+            script: 'docker run --rm planhattan-ml-test',
+            returnStatus: true
+        )
+        
+        if (testExitCode != 0) {
+            error "test failed with exit code: ${testExitCode}"
+        }
       }
     }
 
