@@ -17,7 +17,7 @@ pipeline{
             )
             
             if (testExitCode != 0) {
-                error "测试失败，退出码: ${testExitCode}"
+                error "Test failed with exit code: ${testExitCode}"
             }
 
             sh 'docker rmi planhattan-ml-test'
