@@ -9,7 +9,7 @@ pipeline{
 
     stage('Test'){
       steps{
-        sh 'python -m pip install -r requirements.txt'
+        sh '/usr/bin/python3.12 -m pip install -r requirements.txt'
         sh 'pytest prediction_controller_test.py -v'
       }
     }
