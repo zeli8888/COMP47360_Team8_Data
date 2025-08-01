@@ -11,8 +11,8 @@ This repository contains the trained XGBoost classification model and associated
 - `scaler.pkl` — `MinMaxScaler` used for normalization
 - `season_encoder.pkl` — `LabelEncoder` for season values
 - `label_classes.npy` — Numpy array of class labels (`["high", "low", "medium"]`)
-- `app.py` — Flask API for making predictions
-- `predict_demo.py` — Example script to call the prediction API
+- `predict.py` — Flask API for making predictions
+
 
 ---
 
