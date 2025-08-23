@@ -38,7 +38,7 @@ pipeline{
       steps{
         sh script: 'docker stop planhattan-ml', returnStatus: true
         sh script: 'docker rm planhattan-ml || true', returnStatus: true
-        sh "export version=${version} && docker-compose -p planhattan -f planhattan-ml.yaml up -d --force-recreate"
+        sh "export version=${version} && docker compose -p planhattan -f planhattan-ml.yaml up -d --force-recreate"
       }
     }
   }
