@@ -1,7 +1,6 @@
 # COMP47360_Team8_Data
 # 🧠 NYC Busyness Prediction Model
-
-This repository contains the trained XGBoost classification model and associated preprocessing tools for predicting **busyness levels** across NYC taxi zones. The model is trained on 2023 yellow taxi drop-off data, and exposed via a Flask-based REST API for use in downstream applications.
+This repository contains the trained XGBoost classification model and associated preprocessing tools for predicting **busyness levels** across NYC taxi zones. The model is trained on 2023 yellow taxi drop-off data, and exposed via a Flask-based REST API for use in [Planhattan](https://zeli8888.ddns.net/planhattan/) web application.
 
 **Frontend Repository:** https://github.com/zeli8888/PlanHattan-FrontEnd.git
 
